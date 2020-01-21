@@ -11,15 +11,15 @@ void noisewide() {
   static int gravityCounter = 0;
 
 // Temporary local variables
-  uint8_t tempsamp = constrain(sampleavg/2,0,NUM_LEDS/2-1);                       // Keep the sample from overflowing.
+  uint8_t tempsamp = constrain(sampleAvg/2,0,NUM_LEDS/2-1);                       // Keep the sample from overflowing.
 
 
   fadeToBlackBy(leds, NUM_LEDS, 160);
     
   for (int i=0; i<tempsamp; i++) {
-    uint8_t index = inoise8(i*sampleavg+millis(), 5000+i*sampleavg); 
-    leds[NUM_LEDS/2-i] = ColorFromPalette(currentPalette, index, sampleavg, currentBlending);
-    leds[NUM_LEDS/2+i] = ColorFromPalette(currentPalette, index, sampleavg, currentBlending);
+    uint8_t index = inoise8(i*sampleAvg+millis(), 5000+i*sampleAvg); 
+    leds[NUM_LEDS/2-i] = ColorFromPalette(currentPalette, index, sampleAvg, currentBlending);
+    leds[NUM_LEDS/2+i] = ColorFromPalette(currentPalette, index, sampleAvg, currentBlending);
   }
 
   if (tempsamp >= topLED)
@@ -37,4 +37,3 @@ void noisewide() {
 } // noisewide()
 
 #endif
-

@@ -21,12 +21,15 @@ void plasma() {
     thisbright = cubicwave8((k*8)+thisphase)/2;    
     thisbright += cos8((k*10)+thatphase)/2;                                     // Let's munge the brightness a bit and animate it all with the phases.
     colorIndex=thisbright;
-    thisbright = qsuba(thisbright, 255-sampleavg*2);                              // qsuba chops off values below a threshold defined by sampleavg. Gives a cool effect.
+    thisbright = qsuba(thisbright, 255 - sampleAvg*4);                    // qsuba chops off values below a threshold defined by sampleAvg. Gives a cool effect.
+ 
+ //#define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
     
-    leds[k] = ColorFromPalette( currentPalette, colorIndex, thisbright, currentBlending);   // Let's now add the foreground colour.
+    leds[k] += ColorFromPalette( currentPalette, colorIndex, thisbright, currentBlending);   // Let's now add the foreground colour.
   }
-   
+
+     fadeToBlackBy(leds, NUM_LEDS, 64); 
+     
 } // plasma()
 
 #endif
-

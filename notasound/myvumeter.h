@@ -11,14 +11,14 @@ void myvumeter() {                                                        // A v
   static int gravityCounter = 0;
 
 // Temporary local variables
-  uint8_t tempsamp = constrain(sampleavg,0,NUM_LEDS-1);                     // Keep the sample from overflowing.
+  uint8_t tempsamp = constrain(sampleAvg,0,NUM_LEDS-1);                     // Keep the sample from overflowing.
 
 
   fadeToBlackBy(leds, NUM_LEDS, 160);
     
   for (int i=0; i<tempsamp; i++) {
-    uint8_t index = inoise8(i*sampleavg+millis(), 5000+i*sampleavg); 
-    leds[i] = ColorFromPalette(currentPalette, index, sampleavg, currentBlending);
+    uint8_t index = inoise8(i*sampleAvg+millis(), 5000+i*sampleAvg); 
+    leds[i] = ColorFromPalette(currentPalette, index, sampleAvg, currentBlending);
   }
 
   if (tempsamp >= topLED)
@@ -35,4 +35,3 @@ void myvumeter() {                                                        // A v
 } // myvumeter()
 
 #endif
-

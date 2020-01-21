@@ -11,9 +11,9 @@ void matrix() {                                                  // A 'Matrix' l
 
 
   if (thisdir == 1) {
-      leds[0] = ColorFromPalette(currentPalette, millis(), sample, currentBlending); 
+      leds[0] = ColorFromPalette(currentPalette, millis(), sampleAgc*2, currentBlending); 
   } else {
-      leds[NUM_LEDS-1] = ColorFromPalette( currentPalette, millis(), sample, currentBlending);
+      leds[NUM_LEDS-1] = ColorFromPalette( currentPalette, millis(), sampleAgc*2, currentBlending);
   }
 
   if (thisdir == 1) {
@@ -25,4 +25,3 @@ void matrix() {                                                  // A 'Matrix' l
 } // matrix()
 
 #endif
-

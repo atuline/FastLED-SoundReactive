@@ -14,9 +14,9 @@ void trails() {                                         // Spawns trails that mo
 // Temporary local variables
 
 
-  if (samplepeak) {
+  if (samplePeak) {
     
-    samplepeak = 0;
+    samplePeak = 0;
     int randomTrail = random(maxTrails);
     if (trail[randomTrail].exist) {
       trail[randomTrail].life /= 2;                     // Extend life of trail
@@ -34,9 +34,8 @@ void trails() {                                         // Spawns trails that mo
     }
   }
 
-  fadeToBlackBy(leds, NUM_LEDS, 100); 
+  fadeToBlackBy(leds, NUM_LEDS, 128); 
 
 } // trails()
 
 #endif
-

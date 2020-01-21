@@ -58,7 +58,7 @@ struct bubble {
     pos = random(0, NUM_LEDS);
     velocity = 1;                                 // Increase or decrease if needed
     life = 0;
-    maxLife = 80;                                 //How many moves bubble can do
+    maxLife = 20;                                 // How many moves bubble (or trails) can do
     exist = false;
     brightness = 255;
     color = millis();     // hue + random(30);
@@ -72,4 +72,3 @@ typedef struct bubble Bubble;
 
 
 #endif
-

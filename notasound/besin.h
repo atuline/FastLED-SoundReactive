@@ -10,8 +10,8 @@ void besin() {                                           // Add a Perlin noise s
 // Temporary local variables
 
   
-  leds[NUM_LEDS/2] = ColorFromPalette(currentPalette, millis(), sampleavg, NOBLEND);
-  leds[NUM_LEDS/2-1] = ColorFromPalette(currentPalette, millis(), sampleavg, NOBLEND);
+  leds[NUM_LEDS/2] = ColorFromPalette(currentPalette, millis(), sampleAgc, NOBLEND);
+  leds[NUM_LEDS/2-1] = ColorFromPalette(currentPalette, millis(), sampleAgc, NOBLEND);
 
   waveit();                                              // Move the pixels to the left/right, but not too fast.
 
@@ -20,4 +20,3 @@ void besin() {                                           // Add a Perlin noise s
 } // besin()
 
 #endif
-

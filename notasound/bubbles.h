@@ -14,8 +14,8 @@ void bubbles() {                                          // Spawns bubbles that
 // Temporary local variables
 
 
-  if (samplepeak) {
-    samplepeak = 0;
+  if (samplePeak) {
+    samplePeak = 0;
 
     int randomBubble = random(maxBubbles);
     
@@ -40,4 +40,3 @@ void bubbles() {                                          // Spawns bubbles that
 } // bubbles()
 
 #endif
-

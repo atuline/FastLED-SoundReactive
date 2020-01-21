@@ -1,7 +1,7 @@
 #ifndef JUGGLEP_H
 #define JUGGLEP_H
 
-void jugglep() {                                                                // Use the juggle routine, but adjust the timebase based on sampleavg for some randomness.
+void jugglep() {                                                                // Use the juggle routine, but adjust the timebase based on sampleAvg for some randomness.
 
 // Local definitions
 
@@ -13,14 +13,13 @@ void jugglep() {                                                                
 
   fadeToBlackBy(leds, NUM_LEDS, 32);                                            // Fade the strand.
   
-  leds[beatsin16(thistime,0,NUM_LEDS-1, 0, 0)] += ColorFromPalette( currentPalette, millis()/4, sampleavg*2, currentBlending);
-  leds[beatsin16(thistime-3,0,NUM_LEDS-1, 0, 0)] += ColorFromPalette( currentPalette, millis()/4, sampleavg*2, currentBlending);
+  leds[beatsin16(thistime,0,NUM_LEDS-1, 0, 0)] += ColorFromPalette( currentPalette, millis()/4, sampleAgc, currentBlending);
+  leds[beatsin16(thistime-3,0,NUM_LEDS-1, 0, 0)] += ColorFromPalette( currentPalette, millis()/4, sampleAgc, currentBlending);
   
   EVERY_N_MILLISECONDS(250) {
-    thistime = sampleavg/2;                                                     // Change the beat frequency every 250 ms. By Andrew Tuline.
+    thistime = sampleAvg/2;                                                     // Change the beat frequency every 250 ms. By Andrew Tuline.
   }
  
 } // jugglep()
 
 #endif
-

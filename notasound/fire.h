@@ -1,7 +1,7 @@
 #ifndef FIRE_H
 #define FIRE_H
 
-void fire() {                                                                   // Create fire based on noise and sampleavg. 
+void fire() {                                                                   // Create fire based on noise and sampleAvg. 
 
 // Local definitions
   #define xscale 20                                                             // How far apart they are
@@ -24,10 +24,9 @@ void fire() {                                                                   
 
     index = (255 - i*256/NUM_LEDS) * index/128;                                 // Now we need to scale index so that it gets blacker as we get close to one of the ends.
                                                                                 // This is a simple y=mx+b equation that's been scaled. index/128 is another scaling.
-    leds[i] = ColorFromPalette(currentPalette, index, sampleavg, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
+    leds[i] = ColorFromPalette(currentPalette, index, sampleAvg, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
   }                                                                             // The higher the value of i => the higher up the palette index (see palette definition).
                                                                                                      
 } // fire()
 
 #endif
-
