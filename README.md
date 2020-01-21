@@ -98,8 +98,8 @@ The FastLED community is at [https://www.reddit.com/r/fastled](https://www.reddi
 
 -----------------------------------------------------------------------------------
 
-My Youtube channel is at:               https://www.youtube.com/user/atuline/videos
-My Github account is at:                https://github.com/atuline
-My Gists are at:                        https://gist.github.com/atuline
-My Pastebins are at:                    https://pastebin.com/u/atuline
-FastLED support forum:					https://www.reddit.com/r/fastled
+* My Youtube channel is at:               https://www.youtube.com/user/atuline/videos
+* My Github account is at:                https://github.com/atuline
+* My Gists are at:                        https://gist.github.com/atuline
+* My Pastebins are at:                    https://pastebin.com/u/atuline
+* FastLED support forum:				  https://www.reddit.com/r/fastled
