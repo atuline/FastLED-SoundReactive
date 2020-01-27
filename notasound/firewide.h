@@ -24,8 +24,8 @@ void firewide() {                                                               
 
     index = (255 - i*256/NUM_LEDS) * index / 128;                                 // Now we need to scale index so that it gets blacker as we get close to one of the ends
                                                                                 
-    leds[NUM_LEDS/2-i/2+1] = ColorFromPalette(currentPalette, index, sampleAvg*2, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
-    leds[NUM_LEDS/2+i/2-1] = ColorFromPalette(currentPalette, index, sampleAvg*2, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
+    leds[NUM_LEDS/2-i/2+1] = ColorFromPalette(currentPalette, index, sampleAvg*4, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
+    leds[NUM_LEDS/2+i/2-1] = ColorFromPalette(currentPalette, index, sampleAvg*4, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
     
   }                                                                               // The higher the value of i => the higher up the palette index (see palette definition).
 

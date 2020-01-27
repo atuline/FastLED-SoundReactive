@@ -24,6 +24,12 @@
  * These have been tested thoroughly on an Arduino Nano, but not other platforms and on the Nano, IR control works great with APA102's, but is unreliable
  * with WS2812's.
  * 
+ * Note that WS2812's can cause havoc with IR control.
+ * 
+ * 1) You cannot control them at all on a UNO/Nano while running FastLED.
+ * 2) On ESP8266's, you have a choice of random LED flashing and good control or smooth a display but with intermittent IR control.
+ * 3) 
+ * 
  * 
  * INTRODUCTION *******************************************************************************************************************************************
  *
@@ -31,17 +37,6 @@
  * Each Arduino is IR controlled using Nico Hood's IR control library. The sound routines are customized for the 3.3V ADMP401 MEMS microphone.
  * 
  * 
- * My LED animation design philosophy is to:
- * 
- * NOT use delay statements in the loop as that breaks input routines (i.e. buttons).
- * No nested loops (for performance reasons).
- * Use millis() as a realtime counter, unless a fixed counter is otherwise required.
- * Spend a bit more time on high school math, rather than the elementary school arithmetic method of counting pixels.
- * Keep the display routines as short as possible.
- * Data typing as strict as possible i.e. why define an int when a uint8_t is all that is required, and no floats at all.
- * Localize variables to each routine as much as possible.
- * Break out the display routines into separate .h files for increased readability.
- * Be generous with comments and documentation.
  *
  *
  * VERSIONS ***********************************************************************************************************************************************
@@ -182,7 +177,6 @@
  * An Arduino initialization flag will be set.
  * The starting mode will be 0 (a non-sound reactive display).
  * The starting NUM_LEDS length will be 20 LED's.
- * The starting notasound delay will be 0 ms (this only works with notamesh).
  * The starting squelch value is 20.
  * The starting maxVol for peak detection is 20.
  * 
@@ -202,21 +196,6 @@
  * 
  * LED's will light up as 'white' to indicate the strand length. The strand length will be saved to EEPROM after each keypress.
  * Once done, press B1 again or press A3 to reset the Arduino.
- * 
- * 
- * 2) To increase/decrease the mesh delay (which works best with notamesh):
- * 
- * Again, you'll need to 'activate' your strand for EEPROM programming. To do so:
- * 
- * - Press B1 to put the Arduino into 'Select strand' mode.
- * - Press the button equivalent to your STRANDID, i.e. C1 to 'activate' your Arduino for EEPROM programming.
- * - Press E2 to decrease the amount of mesh delay by 100ms.
- * - Press E3 to increase the amount of mesh delay by 100ms.
- * 
- * LED's will light up as 'white' to indicate the mesh delay (1 led per 100ms). The mesh delay will be saved to EEPROM after each keypress.
- * Once done, press B1 again or A3 to reset the Arduino.
- * 
- * 
  * 
  * 
  * Notasound Operation **********************************************************************************************************************************
@@ -249,53 +228,28 @@
  * Select Arduino                   B1  This allows the EEPROM to be updated. Then press A1 through F4 as configured with STRANDID at compile time. (not A3 or B1 though).
  * Decrease strand length           B2  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
  * Increase strand length           B3  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
- * Palette rotation                 B4  Start palette rotation.
- * 
- * Save palette                     C1  Stop palette rotation and save current palette to EEPROM.
+ *                                  B4
+
+ *                                  C1
  * Slower animation                 C2  Increase value of EVERY_N_MILLISECONDS() for the current (fixed) display mode.
  * Faster animation                 C3  Decrease value of EVERY_N_MILLISECONDS() for the current (fixed) display mode.
  * Toggle direction                 C4  Toggle direction of some sequences. This is saved in EEPROM however very few demos use it.
  * 
- * Enable/disable glitter           D1  Toggles glitter. This is saved in EEPROM.
- * Previous display mode            D2  Also disables demo mode.
- * Next display mode                D3  Also disables demo mode.
- * Save Current mode to EEPROM      D4  This will be the startup mode, and disables demo mode temporarily (if it was enabled).
- * 
- * Decrease maxVol                  E1  Which increases peak detection sensitivity. This is saved in EEPROM.
- * Shorter mesh delay               E2  Decrease mesh delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
- * Longer mesh delay                E3  Increase mesh delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
- * Increase maxVol                  E4  Which decreases peak detection sensitivity. This is saved in EEPROM.
- * 
- * Decrease noise squelch           F1  Allows more ambient noise is displayed. This is saved in EEPROM.
- * Select previous palette          F2  Stop palette rotation and select previous palette immediately.
- * Select next palette              F3  Stop palette rotation and select next palette immediately.
- * Increase noise squelch           F4  Increases noise squelch, so that ambient noise = 0. This is saved in EEPROM.
- * 
- * 
- * Change to:
- * 
- * 
- * Nothing                          B4
- *                                  
- * Nothing                          C1
- * Same                             C2
- * Same                             C3
- * Same                             C4
- * 
- * Decrease maxVol                  D1
- * Increase maxVol                  D2
- * Decrease squelch                 D3
- * Increase squelch                 D4
- * 
+ * Decrease maxVol                  D1  Which increases peak detection sensitivity. This is saved in EEPROM.
+ * Increase maxVol                  D2  Which decreases peak detection sensitivity. This is saved in EEPROM. 
+ * Decrease noise squelch           D3  Allows more ambient noise is displayed. This is saved in EEPROM.
+ * Increase noise squelch           D4  Increases noise squelch, so that ambient noise = 0. This is saved in EEPROM.
+ *
  * Stop palette rotation            E1  Stop palette rotation at current palette. Save palette to EEPROM.
  * Select previous palette          E2  Stop palette rotation and select previous palette immediately. Save palette to EEPROM.
  * Select next palette              E3  Stop palette rotation and select next palette immediately. Save Palette to EEPROM.
  * Enable palette rotation          E4  Enable palette transitioning every 5 seconds.
  * 
- * Enable hue based palette         F1  Select palette that is hue/saturation changeable. 
+ *                                  F1  
  * Previous display mode            F2  Also disables demo mode.
  * Next display mode                F3  Also disables demo mode.
  * Save Current mode to EEPROM      F4  This will be the startup mode, and disables demo mode temporarily. This is saved in EEPROM.
+ * 
  * 
  */
 
@@ -305,8 +259,8 @@
 ------------------------------------------------------------------------------------------*/
 
 
-//#define _ESP8266                                            // Uncomment this if using ESP8266. It's required for EEPROM changes between the platforms.
-#define _NANO                                                 // Uncomment this if using UNO/Nano or similar AVR.
+#define _ESP8266                                            // Uncomment this if using ESP8266. It's required for EEPROM changes between the platforms.
+//#define _NANO                                                 // Uncomment this if using UNO/Nano or similar AVR.
 
 #define qsubd(x, b)  ((x>b)?x:0)                              // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
@@ -329,7 +283,7 @@
 #error "Requires FastLED 3.1 or later. Check github for latest code."
 #endif
 
-#define pinIR 2                                               // Choose a valid PinInterrupt pin of your Arduino board for IR operations. In this case, D2.
+#define pinIR D2                                               // Choose a valid PinInterrupt pin of your Arduino board for IR operations. In this case, D2.
 #define IRL_BLOCKING true
 uint16_t IRAddress;
 uint8_t IRCommand;
@@ -338,18 +292,18 @@ CNec IRLremote;
 
 
 // Fixed definitions cannot change on the fly.
-#define LED_DT 12                                             // Serial data pin for all strands
-#define LED_CK 11                                             // Serial clock pin for WS2801 or APA102
+#define LED_DT D5                                             // Serial data pin for all strands
+#define LED_CK D4                                             // Serial clock pin for WS2801 or APA102
 #define COLOR_ORDER GRB                                       // It's GRB for WS2812
 #define LED_TYPE WS2812                                       // Alternatively WS2801, or WS2812
 #define MAX_LEDS 64                                           // Maximum number of LED's defined (at compile time).
 
-#define MIC_PIN   5                                           // Analog port for microphone
+#define MIC_PIN   A0                                          // Analog port for microphone
 uint8_t squelch = 7;                                          // Anything below this is background noise, so we'll make it '0'.
 int sample;                                                   // Current sample.
 float sampleAvg = 0;                                          // Smoothed Average.
 float micLev = 0;                                             // Used to convert returned value to have '0' as minimum.
-uint8_t maxVol = 11;                                          // Reasonable value for constant volume for 'peak detector', as it won't always trigger.
+uint8_t maxVol = 15;                                          // Reasonable value for constant volume for 'peak detector', as it won't always trigger.
 bool samplePeak = 0;                                          // Boolean flag for peak. Responding routine must reset this flag.
 
 int sampleAgc, multAgc;
@@ -393,19 +347,19 @@ uint8_t currentPatternIndex = 0;                               // Index number o
 #define MXV       21                                           // EEPROM location of maxVol.
 
 
-#define INITVAL   0x51                                        // If this is the value in ISINIT, then the Arduino has been initialized. Change to completely reset your Arduino.
+#define INITVAL   0x55                                        // If this is the value in ISINIT, then the Arduino has been initialized. Change to completely reset your Arduino.
 
 
 #define INITBRIT 255                                          // Initial max_bright.
 #define INITDEL  0                                            // Starting mesh delay value of the strand in milliseconds.
 #define INITDIRN 1                                            // Initial thisdir value.
 #define INITGLIT 0                                            // Glitter is off by default.
-#define INITLEN  40                                           // Start length is 20 LED's.
+#define INITLEN  30                                           // Start length is 20 LED's.
 #define INITMODE 0                                            // Startmode is 0, which is black.
 #define INITPAL  0                                            // Starting palette number.
 #define INITSPED 0                                            // Initial thisdelay value.
-#define INITLHUE 0                                            // Initial lamphue value.
-#define INITLSAT 1                                            // Initial lampsat value.
+#define INITLHUE 0                                            // Initial lamphue value (not used).
+#define INITLSAT 1                                            // Initial lampsat value (not used).
 #define INITDEMO 1                                            // Initial demo mode value.
 
 #define INITMAX  9                                            // Starting maxVol value.
@@ -419,7 +373,7 @@ bool strandFlag = 0;                                          // Flag to let us 
 uint16_t meshdelay;                                           // Timer for the notasound. Works with INITDEL.
 
 uint8_t ledMode = 0;                                          // Starting mode is typically 0. Change INITMODE if you want a different starting mode.
-uint8_t demorun = 1;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
+uint8_t demorun = 0;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
 uint8_t maxMode = 16;                                         // Maximum mode number.
 uint16_t demotime = 10;                                       // Set the length of the demo timer.
 
@@ -429,11 +383,6 @@ uint16_t loops = 0;                                           // Our loops per s
 uint8_t lamphue = 0;                                          // Hue value of lamp mode.
 uint8_t lampsat = 1;                                          // Saturation value of lamp mode.
 
-
-// Reko Merio's global variables
-const int maxBeats = 10;                                      // Min is 2 and value has to be divisible by two.
-const int maxBubbles = 10; //NUM_LEDS / 3;                     // Decrease if there is too much action going on.
-const int maxTrails = 5;                                      // Maximum number of trails.
 
 // IR changeable variables
 uint8_t palchg = 3;                                           // 0=no change, 1=similar, 2=random
@@ -447,17 +396,9 @@ int8_t     thisdir;                                           // Standard direct
 
 // Support functions
 #include "getsample.h"                                        // New sound reactive routines.
-#include "structs.h"                                          // Reko Merio's structures.
 #include "support.h"                                          // Support routines, such as showfps, glitter and routines to move up/down strand.
 #include "gradient_palettes.h"                                // Using fixed gradient palettes rather than random ones.
 
-//Reko Merio's global structure definitions
-Bubble bubble[maxBubbles];
-Bubble trail[maxTrails];
-
-
-// Non sound reactive routine
-#include "noisepal.h"
 
 // Main sound reactive routines
 
@@ -470,15 +411,13 @@ Bubble trail[maxTrails];
 #include "myvumeter.h"      // sampleAvg  - My own vu meter
 #include "noisewide.h"      // sampleAvg  - Center to edges
 #include "onesine.h"        // sampleAvg  - Long line of shortlines
-#include "pixel.h"          // sampleAgc  - Long line of colours
+#include "pixelblend.h"     // sampleAgc  - Long line of blended colours
+#include "pixels.h"         // sampleAgc - Long line of individual colours
 #include "plasma.h"         // sampleAgc  - Long line of short lines
+#include "plasma2.h"        //
 #include "rainbowpeak.h"    // samplepeak - Long line of short lines with twinkles
 #include "ripple.h"         // samplepeak - Juggle with twinkles
 #include "sinephase.h"      // sampleAgc  - Changing phases of sine waves
-
-// Reko Merio display routines
-#include "bubbles.h"        // samplePeak - Bubbles
-#include "trails.h"         // samplePeak - Trails
 
 
 /*------------------------------------------------------------------------------------------
@@ -492,7 +431,7 @@ void setup() {
 
   Serial.println(F(" ")); Serial.println(F("---SETTING UP notasound---"));
 
-  analogReference(EXTERNAL);                                                      // Comment out this line for 3.3V Arduino's, ie. Flora, etc or if powering microphone with 5V.
+//  analogReference(EXTERNAL);                                                      // Comment out this line for 3.3V Arduino's, ie. Flora, etc or if powering microphone with 5V.
   
   if (!IRLremote.begin(pinIR))
     Serial.println(F("You did not choose a valid pin."));
@@ -622,23 +561,23 @@ void strobe_mode(uint8_t newMode, bool mc){                   // mc stands for '
 
   if (!strandActive) {                                          // Stops the display sequence if we're updating the EEPROM in ACTIVE mode.
     switch (newMode) {                                          // If first time through a new mode, then initialize the variables for a given display, otherwise, just call the routine.
-      case   0: if(mc) {thisdelay=20;} noisepal(); break;       // Change mode 0 to a generic non-reactive noise routine.
+      case   0: if(mc) {thisdelay=40;} matrix(); break;         // sampleAgc - Start to end
       case   1: if(mc) {thisdelay=20;} ripple(); break;         // samplepeak - Juggle with twinkles
       case   2: if(mc) {thisdelay=40;} fillnoise(); break;      // sampleAvg  - Center to edges with base color and twinkle
-      case   3: if(mc) {thisdelay=40;} bubbles(); break;        // samplepeak - Bubbles
-      case   4: if(mc) {thisdelay= 0;} pixel(); break;          // sample     - Long line of colours
+      case   3: if(mc) {thisdelay=0;}  pixelblend(); break;     // sampleAgc  - Pixel blending
+      case   4: if(mc) {thisdelay=10;} sinephase(); break;      // sampleAvg  - Changing phases of sine waves
       case   5: if(mc) {thisdelay=30;} onesine(); break;        // sampleAvg  - Long line of shortlines
       case   6: if(mc) {thisdelay=10;} rainbowpeak(); break;    // samplepeak - Long line of short lines with twinkles
       case   7: if(mc) {thisdelay=10;} noisewide(); break;      // sampleAvg  - Center to edges
       case   8: if(mc) {thisdelay=30;} myvumeter(); break;      // sampleAvg  - My own vu meter
       case   9: if(mc) {thisdelay=10;} jugglep(); break;        // sampleAvg  - Long line of sinewaves
       case  10: if(mc) {thisdelay=10;} firewide(); break;       // sampleAvg  - Center to edges
-      case  11: if(mc) {thisdelay=40;} trails(); break;         // samplepeak - Trails
+      case  11: if(mc) {thisdelay=0;}  pixels(); break;         // sampleAgc  - Long line of colours      
       case  12: if(mc) {thisdelay=20;} plasma(); break;         // sampleAvg  - Long line of short lines
       case  13: if(mc) {thisdelay=30;} besin(); break;          // sampleAvg  - Center to edges with black
-      case  14: if(mc) {thisdelay=40;} matrix(); break;         // sampleAgc  - Start to end with twinkles
-      case  15: if(mc) {thisdelay= 0;} fire(); break;           // sampleAvg  - Start to end noise based fire
-      case  16: if(mc) {thisdelay=10;} sinephase(); break;      // sampleAvg  - Changing phases of sine waves
+      case  14: if(mc) {thisdelay=0;}  fire(); break;           // sampleAvg  - Start to end noise based fire
+      case  15: if(mc) {thisdelay=0;}  plasma2(); break;        // sampleAvg  - Start to end noise based fire
+
       default: break;
     } // switch newMode
   } // !strandActive

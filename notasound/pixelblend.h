@@ -1,7 +1,7 @@
-#ifndef PIXEL_H
-#define PIXEL_H
+#ifndef PIXELBLEND_H
+#define PIXELBLEND_H
 
-void pixel() {
+void pixelblend() {
 
 // Local definitions
 
@@ -16,6 +16,8 @@ void pixel() {
   CRGB newcolour = ColorFromPalette(currentPalette, sin8(sample), sampleAgc, currentBlending);   // Colour of the LED will be based on the sample, while brightness is based on sampleavg.
   nblend(leds[currLED], newcolour, 192);                                        // Blend the old value and the new value for a gradual transitioning.
 
-} // pixel()
+//  leds[(millis() % (NUM_LEDS-1)) +1] = ColorFromPalette(currentPalette, sampleAgc, sampleAgc, currentBlending);
+
+} // pixelblend()
 
 #endif
