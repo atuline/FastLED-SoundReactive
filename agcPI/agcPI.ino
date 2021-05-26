@@ -74,7 +74,7 @@ void loop() {
 void ledShow() {
 
   leds[(millis() % (NUM_LEDS-1)) +1 ] = CHSV(samplePI, 255, samplePI);
-  if (samplePeak) {leds[0] = CHSV(0,0,128); samplePeak = 0;}    // Add a peak twinkle to the first LED.
+  if (samplePeak) {leds[0] = CHSV(0,0,128);}    // Add a peak twinkle to the first LED.
  
 } // ledShow()
 
@@ -92,7 +92,9 @@ void getSample() {
   sample = (micIn <= squelch) ? 0 : (sample + micIn)/2;       // Using a ternary operator, the resultant sample is either 0 or it's a bit smoothed out with the last sample.
   sampleAvg = ((sampleAvg * 31) + sample) / 32;               // Smooth it out over the last 32 samples.
 
-  if (sample > (sampleAvg+maxVol) && millis() > (peakTime + 50)) {    // Poor man's beat detection by seeing if sample > Average + some value.
+  if (millis() > (peakTime+50)) samplePeak = 0;              // Reset peak if it's been > 50ms.
+  
+  if (sample > (sampleAvg+maxVol) && millis() > (peakTime + 100)) {    // Poor man's beat detection by seeing if sample > Average + some value.
     samplePeak = 1;
     peakTime=millis();
   }                                                           // Then we got a peak, else we don't. Display routines need to reset the samplepeak value in case they miss the trigger.
